@@ -18,19 +18,57 @@ const MAX_FIELD_LENGTH = 7;
 export default function Home() {
   const [coords, setCoords] = useState<Coords>(EMPTY_COORDS);
   const [activeField, setActiveField] = useState<FieldKey>("mortarX");
+  const [mortarLocked, setMortarLocked] = useState(false);
 
   const solution = useMemo(() => calculateFireSolution(coords), [coords]);
 
   function handleDigit(digit: string) {
+    // Don't allow input on locked mortar fields
+    if (mortarLocked && (activeField === "mortarX" || activeField === "mortarY")) {
+      return;
+    }
+
     setCoords((prev) => {
       const current = prev[activeField];
+      
+      // Prevent multiple decimal points
       if (digit === "." && current.includes(".")) return prev;
+      
+      // Check decimal places - if we already have 2 decimal places, auto-advance instead
+      const decimalIndex = current.indexOf(".");
+      if (decimalIndex !== -1) {
+        const decimalPlaces = current.length - decimalIndex - 1;
+        if (decimalPlaces >= 2) {
+          // Already at 2 decimal places - auto-advance to next field (except for targetY)
+          if (activeField !== "targetY") {
+            setActiveField((current) => nextField(current));
+          }
+          return prev;
+        }
+      }
+      
+      // Prevent exceeding max length
       if (current.length >= MAX_FIELD_LENGTH) return prev;
-      return { ...prev, [activeField]: current + digit };
+      
+      const newValue = current + digit;
+      
+      // Auto-advance if we just completed 2 decimal places (except for targetY)
+      if (decimalIndex !== -1 && newValue.length - decimalIndex - 1 === 2) {
+        if (activeField !== "targetY") {
+          setTimeout(() => setActiveField((current) => nextField(current)), 100);
+        }
+      }
+      
+      return { ...prev, [activeField]: newValue };
     });
   }
 
   function handleBackspace() {
+    // Don't allow backspace on locked mortar fields
+    if (mortarLocked && (activeField === "mortarX" || activeField === "mortarY")) {
+      return;
+    }
+
     setCoords((prev) => ({
       ...prev,
       [activeField]: prev[activeField].slice(0, -1),
@@ -44,6 +82,25 @@ export default function Home() {
 
   function handleNext() {
     setActiveField((current) => nextField(current));
+  }
+
+  function handleLockToggle() {
+    setMortarLocked((prev) => {
+      const newLocked = !prev;
+      // If locking and currently on a mortar field, switch to targetX
+      if (newLocked && (activeField === "mortarX" || activeField === "mortarY")) {
+        setActiveField("targetX");
+      }
+      return newLocked;
+    });
+  }
+
+  function handleFieldSelect(field: FieldKey) {
+    // Prevent selecting mortar fields when locked
+    if (mortarLocked && (field === "mortarX" || field === "mortarY")) {
+      return;
+    }
+    setActiveField(field);
   }
 
   return (
@@ -71,7 +128,8 @@ export default function Home() {
           variant="mortar"
           activeField={activeField}
           values={coords}
-          onSelect={setActiveField}
+          onSelect={handleFieldSelect}
+          isLocked={mortarLocked}
         />
         <CoordCard
           title="TARGET"
@@ -79,7 +137,7 @@ export default function Home() {
           variant="target"
           activeField={activeField}
           values={coords}
-          onSelect={setActiveField}
+          onSelect={handleFieldSelect}
         />
       </div>
 
@@ -88,6 +146,8 @@ export default function Home() {
         onBackspace={handleBackspace}
         onClear={handleClear}
         onNext={handleNext}
+        onLockToggle={handleLockToggle}
+        isLocked={mortarLocked}
       />
     </div>
   );

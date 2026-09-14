@@ -20,11 +20,13 @@ function CoordCell({
   value,
   isActive,
   onSelect,
+  isLocked,
 }: {
   label: string;
   value: string;
   isActive: boolean;
   onSelect: () => void;
+  isLocked?: boolean;
 }) {
   const hasValue = value !== "";
 
@@ -42,24 +44,27 @@ function CoordCell({
     <button
       type="button"
       onClick={onSelect}
+      disabled={isLocked}
       className={[
         "flex h-20 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 overflow-hidden rounded-xl border px-1.5 transition-colors",
-        isActive
-          ? "border-emerald-400 shadow-[0_0_0_1px_rgba(52,211,153,0.4),0_0_14px_2px_rgba(52,211,153,0.35)]"
-          : "border-slate-700/60 bg-slate-950/30",
+        isLocked
+          ? "border-amber-600/30 bg-amber-950/20 cursor-not-allowed opacity-80"
+          : isActive
+            ? "border-emerald-400 shadow-[0_0_0_1px_rgba(52,211,153,0.4),0_0_14px_2px_rgba(52,211,153,0.35)]"
+            : "border-slate-700/60 bg-slate-950/30",
       ].join(" ")}
     >
       <span
         className={[
           "w-full truncate text-[9px] font-semibold uppercase tracking-[0.08em] transition-colors",
-          isActive ? "text-slate-100" : "text-slate-500",
+          isLocked ? "text-amber-500/60" : isActive ? "text-slate-100" : "text-slate-500",
           hasValue ? "text-left" : "text-center",
         ].join(" ")}
       >
         {label}
       </span>
       {hasValue && (
-        <span className={`${getTextSizeClass(value)} w-full truncate text-center font-bold tabular-nums text-slate-50 transition-all`}>
+        <span className={`${getTextSizeClass(value)} w-full truncate text-center font-bold tabular-nums transition-all ${isLocked ? "text-amber-400/70" : "text-slate-50"}`}>
           {value}
         </span>
       )}
@@ -74,6 +79,7 @@ export default function CoordCard({
   activeField,
   values,
   onSelect,
+  isLocked,
 }: {
   title: string;
   titleClassName: string;
@@ -81,11 +87,18 @@ export default function CoordCard({
   activeField: FieldKey;
   values: { mortarX: string; mortarY: string; targetX: string; targetY: string };
   onSelect: (field: FieldKey) => void;
+  isLocked?: boolean;
 }) {
   const fields = variant === "mortar" ? FIELDS : TARGET_FIELDS;
+  const locked = isLocked && variant === "mortar";
 
   return (
-    <div className="relative min-w-0 flex-1 rounded-2xl border border-slate-700/60 bg-slate-900/50 px-2.5 pb-2.5 pt-5">
+    <div className={[
+      "relative min-w-0 flex-1 rounded-2xl border px-2.5 pb-2.5 pt-5 transition-all",
+      locked 
+        ? "border-amber-500/40 bg-amber-950/20 shadow-[0_0_8px_rgba(245,158,11,0.15)]" 
+        : "border-slate-700/60 bg-slate-900/50"
+    ].join(" ")}>
       <span
         className={`absolute -top-2.5 left-3 bg-[#070b14] px-1.5 text-[10px] font-semibold tracking-[0.25em] ${titleClassName}`}
       >
@@ -99,6 +112,7 @@ export default function CoordCard({
             value={values[field.key]}
             isActive={activeField === field.key}
             onSelect={() => onSelect(field.key)}
+            isLocked={locked}
           />
         ))}
       </div>
