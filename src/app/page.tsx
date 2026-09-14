@@ -64,7 +64,7 @@ export default function Home() {
 
       <SolutionPanel solution={solution} />
 
-      <div className="flex gap-3">
+      <div className="flex min-w-0 gap-2">
         <CoordCard
           title="MORTAR"
           titleClassName="text-emerald-400"
