@@ -16,24 +16,24 @@ interface KeyDef {
 
 const KEYS: KeyDef[] = [
   // Row 1
-  { action: { type: "digit", value: "1" } },
-  { action: { type: "digit", value: "4" } },
   { action: { type: "digit", value: "7" } },
+  { action: { type: "digit", value: "8" } },
+  { action: { type: "digit", value: "9" } },
   { action: { type: "backspace" } },
   // Row 2
-  { action: { type: "digit", value: "." } },
-  { action: { type: "digit", value: "2" } },
+  { action: { type: "digit", value: "4" } },
   { action: { type: "digit", value: "5" } },
+  { action: { type: "digit", value: "6" } },
   { action: { type: "blank" } },
   // Row 3
-  { action: { type: "digit", value: "8" } },
-  { action: { type: "digit", value: "0" } },
+  { action: { type: "digit", value: "1" } },
+  { action: { type: "digit", value: "2" } },
   { action: { type: "digit", value: "3" } },
   { action: { type: "clear" }, rowSpan: 2 },
   // Row 4
-  { action: { type: "digit", value: "6" } },
-  { action: { type: "digit", value: "9" } },
-  { action: { type: "next" } },
+  { action: { type: "blank" } },
+  { action: { type: "digit", value: "0" } },
+  { action: { type: "digit", value: "." } },
 ];
 
 function keyLabel(action: KeyAction): ReactNode {

@@ -28,12 +28,22 @@ function CoordCell({
 }) {
   const hasValue = value !== "";
 
+  // Dynamic text sizing based on coordinate length
+  // Coordinates can be up to 700.00 (6 chars max)
+  function getTextSizeClass(val: string): string {
+    const len = val.length;
+    if (len <= 2) return "text-3xl";
+    if (len <= 4) return "text-2xl";
+    if (len <= 6) return "text-xl";
+    return "text-lg";
+  }
+
   return (
     <button
       type="button"
       onClick={onSelect}
       className={[
-        "flex h-20 flex-1 flex-col items-center justify-center gap-1 rounded-xl border px-2 transition-colors",
+        "flex h-20 min-w-0 flex-1 flex-col items-center justify-center gap-1 rounded-xl border px-2 transition-colors",
         isActive
           ? "border-emerald-400 shadow-[0_0_0_1px_rgba(52,211,153,0.4),0_0_14px_2px_rgba(52,211,153,0.35)]"
           : "border-slate-700/60 bg-slate-950/30",
@@ -49,7 +59,7 @@ function CoordCell({
         {label}
       </span>
       {hasValue && (
-        <span className="text-2xl font-bold tabular-nums text-slate-50">
+        <span className={`${getTextSizeClass(value)} font-bold tabular-nums text-slate-50 transition-all`}>
           {value}
         </span>
       )}
