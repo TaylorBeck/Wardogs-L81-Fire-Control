@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #070b14;
+  color: #f1f5f9;
+}
+
+/* Prevent double-tap zoom / long-press callouts on the keypad, matching a native fire-control feel. */
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
