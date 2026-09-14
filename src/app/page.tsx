@@ -1,30 +1,30 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import { useMemo, useState } from "react";
-import CoordCard from "@/components/CoordCard";
-import Keypad from "@/components/Keypad";
-import SolutionPanel from "@/components/SolutionPanel";
+import Image from 'next/image';
+import { useMemo, useState } from 'react';
+import CoordCard from '@/components/CoordCard';
+import Keypad from '@/components/Keypad';
+import SolutionPanel from '@/components/SolutionPanel';
 import {
   EMPTY_COORDS,
   calculateFireSolution,
   nextField,
   type Coords,
   type FieldKey,
-} from "@/lib/fire-control";
+} from '@/lib/fire-control';
 
 const MAX_FIELD_LENGTH = 7;
 
 export default function Home() {
   const [coords, setCoords] = useState<Coords>(EMPTY_COORDS);
-  const [activeField, setActiveField] = useState<FieldKey>("mortarX");
+  const [activeField, setActiveField] = useState<FieldKey>('mortarX');
   const [mortarLocked, setMortarLocked] = useState(false);
 
   const solution = useMemo(() => calculateFireSolution(coords), [coords]);
 
   function handleDigit(digit: string) {
     // Don't allow input on locked mortar fields
-    if (mortarLocked && (activeField === "mortarX" || activeField === "mortarY")) {
+    if (mortarLocked && (activeField === 'mortarX' || activeField === 'mortarY')) {
       return;
     }
 
@@ -32,15 +32,15 @@ export default function Home() {
       const current = prev[activeField];
       
       // Prevent multiple decimal points
-      if (digit === "." && current.includes(".")) return prev;
+      if (digit === '.' && current.includes('.')) return prev;
       
       // Check decimal places - if we already have 2 decimal places, auto-advance instead
-      const decimalIndex = current.indexOf(".");
+      const decimalIndex = current.indexOf('.');
       if (decimalIndex !== -1) {
         const decimalPlaces = current.length - decimalIndex - 1;
         if (decimalPlaces >= 2) {
           // Already at 2 decimal places - auto-advance to next field (except for targetY)
-          if (activeField !== "targetY") {
+          if (activeField !== 'targetY') {
             setActiveField((current) => nextField(current));
           }
           return prev;
@@ -54,7 +54,7 @@ export default function Home() {
       
       // Auto-advance if we just completed 2 decimal places (except for targetY)
       if (decimalIndex !== -1 && newValue.length - decimalIndex - 1 === 2) {
-        if (activeField !== "targetY") {
+        if (activeField !== 'targetY') {
           setTimeout(() => setActiveField((current) => nextField(current)), 100);
         }
       }
@@ -65,7 +65,7 @@ export default function Home() {
 
   function handleBackspace() {
     // Don't allow backspace on locked mortar fields
-    if (mortarLocked && (activeField === "mortarX" || activeField === "mortarY")) {
+    if (mortarLocked && (activeField === 'mortarX' || activeField === 'mortarY')) {
       return;
     }
 
@@ -77,7 +77,7 @@ export default function Home() {
 
   function handleClear() {
     setCoords(EMPTY_COORDS);
-    setActiveField("mortarX");
+    setActiveField('mortarX');
   }
 
   function handleNext() {
@@ -88,8 +88,8 @@ export default function Home() {
     setMortarLocked((prev) => {
       const newLocked = !prev;
       // If locking and currently on a mortar field, switch to targetX
-      if (newLocked && (activeField === "mortarX" || activeField === "mortarY")) {
-        setActiveField("targetX");
+      if (newLocked && (activeField === 'mortarX' || activeField === 'mortarY')) {
+        setActiveField('targetX');
       }
       return newLocked;
     });
@@ -97,7 +97,7 @@ export default function Home() {
 
   function handleFieldSelect(field: FieldKey) {
     // Prevent selecting mortar fields when locked
-    if (mortarLocked && (field === "mortarX" || field === "mortarY")) {
+    if (mortarLocked && (field === 'mortarX' || field === 'mortarY')) {
       return;
     }
     setActiveField(field);
@@ -109,9 +109,9 @@ export default function Home() {
         <Image
           src="/logo.webp"
           alt="Wardogs L81 logo"
-          width={40}
-          height={40}
-          className="h-10 w-10 shrink-0"
+          width={180}
+          height={180}
+          className="h-[60px] w-[60px] shrink-0"
           priority
         />
         <h1 className="text-xl font-extrabold tracking-[0.08em] text-slate-50">
